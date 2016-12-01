@@ -49,15 +49,14 @@ class CloudifyClient(object):
                 raise Exception('SSL enabled, but path to public certificate '
                                 'is missing')
 
-        scheme = 'https' if secure else 'http'
+        scheme = 'https' if (secure and ssl_enabled) else 'http'
         self.url = '%s://%s/api/v2.1/node-instances' % (scheme, host)
         self.session = Session()
-        self.session.verify = verify
         if secure:
             self.session.auth = (username, password)
         if ssl_enabled:
             if secure:
-                self.session.cert = cert
+                self.session.verify = cert if verify else verify
             else:
                 # https://github.com/cloudify-cosmo/
                 # cloudify-manager-blueprints/blob/3.4-build/
@@ -124,9 +123,9 @@ class CloudifyClient(object):
             log.error('HTTP request failed for node "%s" (%s) with status '
                       'code %d: %s', host_id, deployment_id,
                       node_instance.status_code, node_instance.content)
+            # Propagate the original error in case the API returned OK,
+            # but decoding failed regardless.
             if node_instance.ok:
-                # Propagate the original error in case the API returned OK,
-                # but decoding failed regardless.
                 raise
         except AssertionError as err:
             log.error('Deployment ID mismatch for host "%s" (%s)',

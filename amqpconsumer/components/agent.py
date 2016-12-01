@@ -207,8 +207,8 @@ def bootstrap():
     ws_kwargs = {
         'url': os.getenv('DESTINATION_URL'),
         'token': os.getenv('TOKEN'),
-        'ca_certs': os.getenv('STREAM_CA_CERTS'),
         'secure': True if os.getenv('STREAM_SECURE') == 'True' else False,
+        'ca_certs': os.getenv('STREAM_CA_CERTS'),
     }
 
     cfy_kwargs = {

@@ -37,12 +37,10 @@ class WebSocketClient(_WebSocketClient):
                 'cert_reqs': reqs
             }
 
-        super(WebSocketClient, self).__init__('%s://%s/insights/socket/'
-                                              % (scheme, url),
-                                              headers=[
-                                                  ('Authorization', token)
-                                              ],
-                                              ssl_options=ssl_options)
+        super(WebSocketClient, self).__init__(
+            '%s://%s/insights/socket/' % (scheme, url),
+            headers=[('Authorization', token)], ssl_options=ssl_options
+        )
 
         self.connect()
 
