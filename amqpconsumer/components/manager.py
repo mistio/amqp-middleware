@@ -11,7 +11,8 @@ logging.basicConfig(level=logging.INFO,
 
 log = logging.getLogger(__name__)
 
-
+# A mapping between cloud provider names and the field of the corresponding
+# resource ID, as it is meant to exist in the database.
 PROVIDERS = {
     'azure': 'name',
     'do': 'resource_id',
@@ -33,10 +34,11 @@ class CloudifyClient(object):
 
         :param host: the Cloudify Manager's IP address.
         :param credentials: security parameters used in order to authenticate
-        to a secure Cloudify Manager.
+         to a secure Cloudify Manager.
         :param secure: denotes whether the Cloudify Manager is secure.
         :param ssl_enabled: denotes whether SSL is enabled.
         :param verify: specifies whether to verify the SSL certificate.
+
         """
         username = credentials.get('username', '')
         password = credentials.get('password', '')
@@ -78,15 +80,16 @@ class CloudifyClient(object):
             log.info('No cached information found for host "%s" (%s)',
                      host_id, deployment_id)
 
-            # Query ElasticSearch for the node instance's runtime properties.
+            # Query db for the node instance's runtime properties.
             runtime_properties = self.get_attributes(deployment_id, host_id)
 
+            # Search for host information and cache it.
             for provider, rfield in PROVIDERS.iteritems():
                 if rfield in runtime_properties.iterkeys():
                     rid = runtime_properties[rfield]
-                    # Store host information.
+
                     self.resources[host_id] = (provider, rid)
-                    log.info('ElasticSearch HIT for host "%s" (%s): %s = %s',
+                    log.info('Database HIT for host "%s" (%s): %s = %s',
                              host_id, deployment_id, rfield, rid)
                     break
             else:
@@ -94,7 +97,7 @@ class CloudifyClient(object):
                           host_id, deployment_id)
                 return
 
-        # Inject resource ID in metric.
+        # Inject resource ID in the event.
         provider, rid = self.resources[host_id]
         event.update({
             'provider': provider,
@@ -112,7 +115,9 @@ class CloudifyClient(object):
 
         :param deployment_id: the deployment the node instance belongs to.
         :param host_id: the node instance's host ID.
+
         :return: the node instance's runtime properties.
+
         """
         node_instance = self.session.get('%s/%s' % (self.url, host_id))
 
@@ -132,4 +137,5 @@ class CloudifyClient(object):
                       host_id, deployment_id)
         else:
             err = ''
+
         return node_instance['runtime_properties'] if not err else {}

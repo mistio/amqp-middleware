@@ -23,6 +23,7 @@ class WebSocketClient(_WebSocketClient):
         :param ca_certs: the file of CA certificates to be used in case of SSL.
         :param validate: specifies whether a certificate is required.
         :param secure: specifies whether or not to use a secure ws.
+
         """
         scheme = 'ws'
         ssl_options = {}
