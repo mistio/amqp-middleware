@@ -242,6 +242,7 @@ def bootstrap():
         'secure': True if os.getenv('SECURE') == 'True' else False,
         'verify': True if os.getenv('VERIFY') == 'True' else False,
         'credentials': {
+            'tenant': os.getenv('TENANT'),
             'username': os.getenv('USERNAME'),
             'password': os.getenv('PASSWORD'),
             'ca_certs': os.getenv('CA_CERTS'),

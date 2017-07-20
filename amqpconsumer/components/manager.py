@@ -42,9 +42,12 @@ class CloudifyClient(object):
         """
         username = credentials.get('username', '')
         password = credentials.get('password', '')
+        tenant = credentials.get('tenant', '')
         if secure and not (username and password):
             raise Exception('Security is enabled, but no username:password '
                             'has been provided')
+        if not tenant:
+            raise Exception('No tenant specified')
         if ssl_enabled:
             cert = credentials.get('ca_certs', '')
             if not cert:
@@ -54,6 +57,7 @@ class CloudifyClient(object):
         scheme = 'https' if (secure and ssl_enabled) else 'http'
         self.url = '%s://%s/api/v2.1/node-instances' % (scheme, host)
         self.session = Session()
+        self.session.headers.update({'Tenant': tenant})
         if secure:
             self.session.auth = (username, password)
         if ssl_enabled:
