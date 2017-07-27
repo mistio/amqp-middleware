@@ -5,7 +5,7 @@ setup(
     name='amqp-middleware',
     version='1.0',
     description='AMQP Consumer-Publisher Middleware',
-    url='https://github.com/pchristos/amqp-middleware',
+    url='https://github.com/mistio/amqp-middleware',
     license='Apache',
     author='Chris Pollalis',
     author_email='cpollalis@mist.io',
