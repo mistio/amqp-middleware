@@ -66,7 +66,8 @@ class AMQPConsumer(object):
             raise pika.exceptions.AMQPConnectionError()
 
         # Declare RMQ exchange.
-        self.channel.exchange_declare(exchange=exchange, type=exchange_type,
+        self.channel.exchange_declare(exchange=exchange,
+                                      exchange_type=exchange_type,
                                       durable=False, auto_delete=True,
                                       internal=False)
 
