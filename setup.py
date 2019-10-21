@@ -21,6 +21,6 @@ setup(
     install_requires=[
         'pika>=0.9.14',
         'ws4py==0.3.5',
-        'requests==2.7.0',
+        'requests==2.20.0',
     ],
 )
